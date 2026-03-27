@@ -1,43 +1,50 @@
 # ramu
 
-A smart Downloads folder organizer for macOS with **SQLite-backed undo** (last 4 sessions).
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-Automatically sorts `~/Downloads` into 38 typed subfolders with keyword-aware sub-sorting for large categories. Runs daily via cron or on-demand.
+Your Downloads folder is a warzone. PDFs from 2022 vibing next to random `.dmg` files, screenshots you swore you'd delete, and that one `invoice_final_FINAL_v3.pdf`. We've all been there.
+
+**ramu** is a no-nonsense shell script that sorts your `~/Downloads` into 38 clean folders — with sub-sorting for the messy ones (PDFs by keyword, images by format, archives by source). Every move is tracked in SQLite, so you can undo up to 4 sessions if ramu gets too enthusiastic.
+
+Built for my own workflow, tuned to how I actually use my Mac. But it's just a shell script — crack it open and hack it to fit yours.
 
 ---
 
-## Install
+## Quick Start
 
-```zsh
+```bash
 git clone https://github.com/imkuldeepahlawat/ramu.git
 cd ramu
-zsh setup.sh
+bash setup.sh
 source ~/.zshrc
 ```
 
-**Requirements:** macOS, zsh, sqlite3 (pre-installed on macOS)
+That's it. You now have `ramu` as an alias and a daily 9am cron job keeping things tidy.
+
+**Needs:** macOS, sqlite3 (already on your Mac), bash 3.2+ or zsh or sh — whatever you run, ramu runs.
 
 ---
 
-## Usage
+## What Can It Do
 
-```zsh
-ramu              # organize ~/Downloads
-ramu help         # show full help
-ramu history      # show last 4 sessions
-ramu undo         # undo most recent session
-ramu undo 2       # undo 2nd most recent session
-ramu undo 3|4     # undo 3rd or 4th most recent session
+```bash
+ramu              # sort the chaos
+ramu help         # the full menu
+ramu history      # see last 4 runs
+ramu undo         # oops, bring it all back
+ramu undo 2       # undo a specific session
 ```
 
-Override the target directory:
-```zsh
+Want to point it at a different folder?
+```bash
 RAMU_DIR=~/Desktop ramu
 ```
 
 ---
 
-## Folder Structure
+## Where Does Stuff Go
+
+ramu doesn't just dump everything into "Documents" and call it a day. It actually thinks about it:
 
 ```
 Downloads/
@@ -57,56 +64,38 @@ Downloads/
 ├── 05 Notes & Text/
 ├── 06 eBooks & Comics/
 ├── 07 Images/
-│   ├── PNG/
-│   ├── JPEG/
-│   ├── Vectors/
-│   ├── Web/
-│   ├── Animated/
-│   ├── Apple/
-│   └── Icons/
+│   ├── PNG/  JPEG/  Vectors/  Web/
+│   ├── Animated/  Apple/  Icons/
 ├── 08 RAW Photos/
 ├── 09 Videos/
-│   ├── Screen Recordings/
-│   ├── MOV/
-│   ├── MP4/
-│   ├── MKV/
-│   └── WebM/
+│   ├── Screen Recordings/  MOV/  MP4/  MKV/  WebM/
 ├── 10 Audio/
-│   ├── MP3/
-│   ├── WAV/
-│   ├── AAC/
-│   └── FLAC/
+│   ├── MP3/  WAV/  AAC/  FLAC/
 ├── 11 Subtitles/
 ├── 12 Playlists/
-├── 13 Design Files/        (.fig .sketch .xd .afdesign …)
-├── 14 Adobe Files/         (.psd .ai .indd .aep …)
+├── 13 Design Files/        .fig .sketch .xd .afdesign
+├── 14 Adobe Files/         .psd .ai .indd .aep
 ├── 15 3D Models & CAD/
-│   ├── CAD & Architecture/ (.dwg .dxf .ifc .rvt …)
-│   ├── 3D Models/          (.gltf .glb .obj .fbx …)
-│   ├── Print Files/        (.stl .ply)
-│   └── Blender/            (.blend)
-├── 16 Web/                 (.html .css .js .ts .tsx .vue …)
-├── 17 Backend & Systems/   (.py .go .rs .java .cpp …)
-├── 18 Scripts & Shell/     (.sh .zsh .ps1 .bat …)
+│   ├── CAD & Architecture/  3D Models/
+│   ├── Print Files/  Blender/
+├── 16 Web/                 .html .css .js .ts .vue
+├── 17 Backend & Systems/   .py .go .rs .java .cpp
+├── 18 Scripts & Shell/     .sh .zsh .ps1 .bat
 ├── 19 Config & Infra/
-│   ├── Docker/
-│   ├── Kubernetes/
-│   ├── Secrets & Keys/
-│   └── Data Files/
-├── 20 Queries & Markup/    (.sql .graphql .proto .tex …)
+│   ├── Docker/  Kubernetes/
+│   ├── Secrets & Keys/  Data Files/
+├── 20 Queries & Markup/    .sql .graphql .proto .tex
 ├── 21 Archives/
-│   ├── WhatsApp Exports/
-│   ├── iOS & Mobile/
-│   ├── Google Drive/
-│   └── Projects/
+│   ├── WhatsApp Exports/  iOS & Mobile/
+│   ├── Google Drive/  Projects/
 ├── 22 Disk Images/
-├── 23 Installers/          (.dmg .pkg .exe .apk .ipa …)
-├── 24 Data & Databases/    (.parquet .geojson .gpx …)
-├── 25 ML & AI Models/      (.onnx .safetensors .gguf …)
+├── 23 Installers/          .dmg .pkg .exe .apk
+├── 24 Data & Databases/    .parquet .geojson .gpx
+├── 25 ML & AI Models/      .onnx .safetensors .gguf
 ├── 26 Scientific/
-├── 27 Medical Imaging/     (.dcm .nii …)
-├── 28 Certificates & Keys/ (.pem .crt .pfx .gpg …)
-├── 29 Email & Calendar/    (.eml .ics .vcf …)
+├── 27 Medical Imaging/
+├── 28 Certificates & Keys/ .pem .crt .pfx .gpg
+├── 29 Email & Calendar/
 ├── 30 Fonts/
 ├── 31 Executables/
 ├── 32 Virtual Machines/
@@ -116,37 +105,56 @@ Downloads/
 ├── 36 Shortcuts & Links/
 ├── 37 Patch & Diff/
 ├── 38 Logs/
-└── 39 Other/
+└── 39 Other/               everything else lands here
 ```
 
 ---
 
-## Undo
+## The Undo Safety Net
 
-Every `mv` is recorded in `~/scripts/ramu.db`. Each run creates a session. Up to **4 sessions** are kept.
+Every single file move gets logged to `~/scripts/ramu.db`. Not some of them — all of them.
 
-```zsh
+```bash
 ramu history
 # #5  2026-03-27 12:18  841 files  ~/Downloads
 # #4  2026-03-27 09:00  12 files   ~/Downloads
 
-ramu undo      # restore session #5 files → ~/Downloads
-ramu undo 2    # restore session #4 files → ~/Downloads (independent)
+ramu undo        # bring back session #5
+ramu undo 2      # bring back session #4, independently
 ```
 
-Each undo is **isolated** — reversing session 2 does not affect session 1.
+Undos are isolated. Reversing session 2 doesn't touch session 1. ramu keeps the last 4 sessions and auto-prunes older ones.
 
 ---
 
-## Cron
+## Runs While You Sleep
 
-Setup installs a daily cron job at 9am:
+Setup drops a cron job that fires every morning at 9am:
 
 ```
-0 9 * * * /bin/zsh ~/scripts/ramu.sh >> ~/scripts/ramu.log 2>&1
+0 9 * * * /bin/bash ~/scripts/ramu.sh >> ~/scripts/ramu.log 2>&1
 ```
+
+Wake up to a clean Downloads. Every day. No effort.
 
 ---
+
+## Hack It
+
+This is a single `.sh` file. The folder categories, sub-sort keywords, extension mappings — it's all right there in `ramu.sh`. Don't like how PDFs are sorted? Change the keywords. Want to add a category for your weird `.xyz` files? Add one line. No config files, no YAML, no build step.
+
+```bash
+# adding a new category is literally one line:
+add "40 My Custom Folder" "xyz abc def"
+```
+
+The sub-sort functions are just as simple — `sub_by_ext` sorts by file extension, `sub_by_name` sorts by keywords in the filename. Mix and match.
+
+---
+
+## License
+
+MIT — do whatever you want with it.
 
 ## Author
 

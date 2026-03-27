@@ -1,9 +1,10 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 # setup.sh — Install ramu on your machine
+# Compatible with: bash 3.2+, zsh
 
 set -e
 
-SCRIPT_DIR="${0:A:h}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SCRIPTS_DIR="$HOME/scripts"
 ZSHRC="$HOME/.zshrc"
 DB="$SCRIPTS_DIR/ramu.db"
@@ -41,7 +42,7 @@ echo "  ✅ Database  → $DB"
 if grep -q 'alias ramu=' "$ZSHRC" 2>/dev/null; then
   echo "  ⏭️  Alias already in $ZSHRC — skipped"
 else
-  echo '\n# ramu — Downloads organizer\nalias ramu="zsh $HOME/scripts/ramu.sh"' >> "$ZSHRC"
+  echo '\n# ramu — Downloads organizer\nalias ramu="bash $HOME/scripts/ramu.sh"' >> "$ZSHRC"
   echo "  ✅ Alias added to $ZSHRC"
 fi
 
@@ -49,7 +50,7 @@ fi
 if crontab -l 2>/dev/null | grep -q "ramu.sh"; then
   echo "  ⏭️  Cron job already exists — skipped"
 else
-  (crontab -l 2>/dev/null; echo "0 9 * * * /bin/zsh $HOME/scripts/ramu.sh >> $HOME/scripts/ramu.log 2>&1") | crontab -
+  (crontab -l 2>/dev/null; echo "0 9 * * * /bin/bash $HOME/scripts/ramu.sh >> $HOME/scripts/ramu.log 2>&1") | crontab -
   echo "  ✅ Cron job → daily at 9am"
 fi
 
