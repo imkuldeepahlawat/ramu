@@ -334,14 +334,6 @@ case "$1" in
 
   # ── AI: smart re-categorize "39 Other" ──────────────────────────────────────
   ai-sort)
-    if ! ollama_check; then
-      echo ""
-      echo "  ❌ Ollama is not running at $OLLAMA_URL"
-      echo "     Start it with: ollama serve"
-      echo ""
-      exit 1
-    fi
-
     apply=false; limit=20
     shift
     while [ $# -gt 0 ]; do
@@ -439,6 +431,12 @@ case "$1" in
         fi
         sqlite3 "$DB" "INSERT OR REPLACE INTO file_descriptions (filepath, filename, folder, ai_category)
           VALUES ('$(sql_esc "$DOWNLOADS/$rule_match/$fname")', '$(sql_esc "$fname")', '$(sql_esc "$rule_match")', '$(sql_esc "$rule_match")');"
+        continue
+      fi
+
+      # Need AI for this file — check Ollama
+      if ! ollama_check; then
+        printf "  ⚠️  %-40s  (needs AI — Ollama offline)\n" "$fname"
         continue
       fi
 
@@ -588,6 +586,9 @@ Filename: $fname"
       echo "     Run 'ramu undo' to reverse"
     else
       echo "  $suggested suggestions  (run 'ramu ai-sort --apply' to execute)"
+    fi
+    if ! ollama_check 2>/dev/null; then
+      echo "  💡 Start Ollama to classify unknown extensions with AI"
     fi
     echo ""
     exit 0

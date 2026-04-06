@@ -12,14 +12,19 @@ Built for my own workflow, tuned to how I actually use my Mac. But it's just a s
 
 ## Quick Start
 
+**One-line install:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/imkuldeepahlawat/ramu/main/install.sh | bash
+```
+
+**Or clone and setup:**
 ```bash
 git clone https://github.com/imkuldeepahlawat/ramu.git
 cd ramu
 bash setup.sh
-source ~/.zshrc
 ```
 
-That's it. You now have `ramu` as an alias and a daily 9am cron job keeping things tidy.
+Then reload your shell (`source ~/.zshrc` or `source ~/.bashrc`) — you now have `ramu` as an alias and a daily 9am cron job keeping things tidy.
 
 **Needs:** macOS, sqlite3, curl, jq (all pre-installed on macOS), bash 3.2+ or zsh or sh — whatever you run, ramu runs.
 
@@ -215,6 +220,3 @@ The sub-sort functions are just as simple — `sub_by_ext` sorts by file extensi
 
 MIT — do whatever you want with it.
 
-## Author
-
-**Kuldeep Ahlawat** — [@imkuldeepahlawat](https://github.com/imkuldeepahlawat)

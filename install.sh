@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# setup.sh — Install ramu on your machine
+# install.sh — One-line installer for ramu
+# Usage: curl -fsSL https://raw.githubusercontent.com/imkuldeepahlawat/ramu/main/install.sh | bash
+#
 # Compatible with: bash 3.2+, zsh
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO="https://raw.githubusercontent.com/imkuldeepahlawat/ramu/main"
 SCRIPTS_DIR="$HOME/scripts"
 DB="$SCRIPTS_DIR/ramu.db"
 
@@ -18,23 +20,28 @@ else
 fi
 
 echo ""
-echo "  📦 ramu setup"
+echo "  📦 ramu — one-line install"
 echo "  ─────────────────────────────────────"
 
 # 0. Check dependencies
+missing=""
 for cmd in sqlite3 curl jq; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
-    echo "  ❌ Missing dependency: $cmd"
-    echo "     Install it before running setup."
-    exit 1
+    missing="$missing $cmd"
   fi
 done
+if [ -n "$missing" ]; then
+  echo "  ❌ Missing dependencies:$missing"
+  echo "     Install them first, then re-run."
+  exit 1
+fi
 
 # 1. Create ~/scripts if needed
 mkdir -p "$SCRIPTS_DIR"
 
-# 2. Copy ramu.sh
-cp "$SCRIPT_DIR/ramu.sh" "$SCRIPTS_DIR/ramu.sh"
+# 2. Download ramu.sh
+echo "  Downloading ramu.sh..."
+curl -fsSL "$REPO/ramu.sh" -o "$SCRIPTS_DIR/ramu.sh"
 chmod +x "$SCRIPTS_DIR/ramu.sh"
 echo "  ✅ Installed → $SCRIPTS_DIR/ramu.sh"
 
@@ -64,7 +71,7 @@ CREATE TABLE IF NOT EXISTS file_descriptions (
 );"
 echo "  ✅ Database  → $DB"
 
-# 4. Add alias to .zshrc (skip if already present)
+# 4. Add alias to shell config (skip if already present)
 if grep -q 'alias ramu=' "$SHELLRC" 2>/dev/null; then
   echo "  ⏭️  Alias already in $SHELLRC — skipped"
 else
