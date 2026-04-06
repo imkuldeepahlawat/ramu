@@ -21,7 +21,9 @@ source ~/.zshrc
 
 That's it. You now have `ramu` as an alias and a daily 9am cron job keeping things tidy.
 
-**Needs:** macOS, sqlite3 (already on your Mac), bash 3.2+ or zsh or sh — whatever you run, ramu runs.
+**Needs:** macOS, sqlite3, curl, jq (all pre-installed on macOS), bash 3.2+ or zsh or sh — whatever you run, ramu runs.
+
+**AI features need:** [Ollama](https://ollama.com/download) (local install) or Docker — ramu can manage its own Ollama container.
 
 ---
 
@@ -38,6 +40,63 @@ ramu undo 2       # undo a specific session
 Want to point it at a different folder?
 ```bash
 RAMU_DIR=~/Desktop ramu
+```
+
+---
+
+## AI Powers
+
+ramu uses [Ollama](https://ollama.com) to run a local AI model (mistral 7B by default) for smart file management. No cloud, no API keys, everything stays on your machine.
+
+### Setup (pick one)
+
+```bash
+# Option A: Install Ollama locally
+brew install ollama
+ollama serve &
+ollama pull mistral
+
+# Option B: Let ramu handle it via Docker
+ramu ai-start    # pulls and runs ollama/ollama in Docker, downloads model
+ramu ai-stop     # stops the container (data preserved)
+```
+
+### Smart Sort — rescue files from "39 Other"
+
+Files that don't match any extension rule end up in `39 Other`. AI analyzes them and suggests the right folder.
+
+```bash
+ramu ai-sort            # preview suggestions (dry run)
+ramu ai-sort --apply    # actually move the files
+ramu undo               # changed your mind? undo works as usual
+```
+
+For known extensions (`.dwg`, `.pdf`, `.xlsx`, etc.) ramu uses deterministic rule-based matching — instant, no hallucination. AI is only called for truly ambiguous files.
+
+### Ask — natural language file search
+
+```bash
+ramu ask "where did my resume go"
+ramu ask "club house plans"
+ramu ask "tax documents"
+```
+
+Searches your move history using AI-powered query understanding. Falls back to keyword search if Ollama is offline.
+
+### Describe — AI file descriptions
+
+```bash
+ramu describe              # describe all undescribed files
+ramu describe "07 Images"  # target a specific folder
+```
+
+Generates one-line descriptions stored in SQLite, making `ramu ask` searches even better.
+
+### Environment Variables
+
+```bash
+RAMU_OLLAMA_URL=http://localhost:11434   # default Ollama endpoint
+RAMU_OLLAMA_MODEL=mistral:latest         # swap in any Ollama model
 ```
 
 ---

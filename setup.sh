@@ -13,6 +13,15 @@ echo ""
 echo "  📦 ramu setup"
 echo "  ─────────────────────────────────────"
 
+# 0. Check dependencies
+for cmd in sqlite3 curl jq; do
+  if ! command -v "$cmd" >/dev/null 2>&1; then
+    echo "  ❌ Missing dependency: $cmd"
+    echo "     Install it before running setup."
+    exit 1
+  fi
+done
+
 # 1. Create ~/scripts if needed
 mkdir -p "$SCRIPTS_DIR"
 
@@ -35,6 +44,15 @@ CREATE TABLE IF NOT EXISTS moves (
   session_id INTEGER NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
   src        TEXT NOT NULL,
   dst        TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS file_descriptions (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  filepath    TEXT NOT NULL UNIQUE,
+  filename    TEXT NOT NULL,
+  folder      TEXT NOT NULL,
+  description TEXT,
+  ai_category TEXT,
+  created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );"
 echo "  ✅ Database  → $DB"
 
@@ -59,4 +77,8 @@ echo "  🎉 Done! Reload your shell:"
 echo "     source ~/.zshrc"
 echo ""
 echo "  Then run:  ramu help"
+echo ""
+echo "  🤖 AI features: ramu uses Ollama for AI. Choose one:"
+echo "     Option A:  Install Ollama → https://ollama.com/download"
+echo "     Option B:  Use Docker   → ramu ai-start"
 echo ""
